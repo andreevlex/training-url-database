@@ -366,6 +366,26 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
                     query.value("datecreate").toString(), Qt::ISODate);
         newRef.setDateCreate(newDate);
 
+        QSqlQuery queryTags(db);
+        queryTags.prepare("SELECT "
+                          "tags.TagName "
+                          "FROM tags "
+                          "WHERE tags.fk_id= :FK_ID");
+        queryTags.bindValue(":FK_ID", newRef.getID());
+        if( !queryTags.exec() )
+        {
+            qDebug() << queryTags.lastError().text();
+        }
+        else
+        {
+            while( queryTags.next() )
+            {
+                Tag newTag;
+                newTag.setName(queryTags.value(0).toString());
+                newRef.addTag(newTag);
+            }
+        }
+
         allFavoriteRefsDB->push_back(newRef);
     }
 

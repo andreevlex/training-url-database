@@ -5,7 +5,7 @@
 #include "QStandardItemModel"
 #include "QStandardItem"
 #include <memory>
-
+#include "urllockchecker.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -98,6 +98,51 @@ QMenu * mnFile = new QMenu("Файл"); // создаём меню Файл
     ui->menuBar->addMenu(mnHelp);
 }
 
+QString MainWindow::createStringTags(const RefRecord& currentRef)
+{
+    QString allTags("");
+
+    for(auto ittags = currentRef.firstTag(); ittags != currentRef.lastTag(); ++ittags)
+    {
+        allTags += ittags->getName() + " ";
+    }
+    return allTags;
+}
+
+void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef)
+{
+    QStandardItem *item;
+
+    item = new QStandardItem(QStringLiteral("%1").arg(currentRef.getID()));
+    model->setItem(lineNum, 0, item);
+
+    item = new QStandardItem(currentRef.getName());
+    model->setItem(lineNum, 1, item);
+
+    item = new QStandardItem(currentRef.getUrl());
+    model->setItem(lineNum, 2, item);
+
+    item = new QStandardItem(createStringTags(currentRef));
+    model->setItem(lineNum, 3, item);
+
+    /* реализация не функционального требования */
+    UrlLockChecker newChecker(currentRef.getUrl());
+    QString lockedStr("");
+
+    if( newChecker.isValid() )
+    {
+      lockedStr = newChecker.isLock() ? "ДА" : "НЕТ";
+    }
+    else
+    {
+        lockedStr = "";
+    }
+
+    item = new QStandardItem(lockedStr);
+    model->setItem(lineNum, 4, item);
+    /* реализация не функционального требования */
+}
+
 void MainWindow::showRefs()
 {
 
@@ -107,13 +152,15 @@ void MainWindow::showRefs()
     }
 
     QStandardItemModel *model = new QStandardItemModel;
-    QStandardItem *item;
 
     // Заголовки столбцов
     QStringList horizontalHeader;
     horizontalHeader.append("id");
     horizontalHeader.append("name");
     horizontalHeader.append("url");
+    horizontalHeader.append("tags");
+    horizontalHeader.append("locked");
+
 
     model->setHorizontalHeaderLabels(horizontalHeader);
 
@@ -124,15 +171,7 @@ void MainWindow::showRefs()
         int i = 0;
         for(auto it = allRefs->begin(); it != allRefs->end(); ++it)
         {
-            item = new QStandardItem(QStringLiteral("%1").arg(it->getID()));
-            model->setItem(i, 0, item);
-
-            item = new QStandardItem(it->getName());
-            model->setItem(i, 1, item);
-
-            item = new QStandardItem(it->getUrl());
-            model->setItem(i, 2, item);
-
+            addLineToRefs(model, i, *it);
             i++;
         }
     }
@@ -153,13 +192,14 @@ void MainWindow::showFavoriteRefs()
     }
 
     QStandardItemModel *model = new QStandardItemModel;
-    QStandardItem *item;
 
     // Заголовки столбцов
     QStringList horizontalHeader;
     horizontalHeader.append("id");
     horizontalHeader.append("name");
     horizontalHeader.append("url");
+    horizontalHeader.append("tags");
+    horizontalHeader.append("locked");
 
     model->setHorizontalHeaderLabels(horizontalHeader);
 
@@ -170,14 +210,7 @@ void MainWindow::showFavoriteRefs()
         int i = 0;
         for(auto it = allFavoriteRefs->begin(); it != allFavoriteRefs->end(); ++it)
         {
-            item = new QStandardItem(QStringLiteral("%1").arg(it->getID()));
-            model->setItem(i, 0, item);
-
-            item = new QStandardItem(it->getName());
-            model->setItem(i, 1, item);
-
-            item = new QStandardItem(it->getUrl());
-            model->setItem(i, 2, item);
+            addLineToRefs(model, i, *it);
 
             i++;
         }
@@ -227,4 +260,20 @@ void MainWindow::showTags()
     dbMain->closeDB();
 }
 
+void MainWindow::on_pushButton_2_clicked()
+{
+    UrlLockChecker newChecker("http://www.rutracker.org/");
+
+    if(newChecker.isValid())
+    {
+        if(newChecker.isLock())
+        {
+            ui->textEdit_2->insertPlainText("rutracker.org в списке запрета!\n");
+        }
+        else
+        {
+            ui->textEdit_2->insertPlainText("rutracker.org сайт не входит в список\n");
+        }
+    }
+}
 

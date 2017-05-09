@@ -14,11 +14,6 @@ namespace Udb {
 
 class UrlDatabase
 {
-private:
-
-    QSqlDatabase db;
-    Udb::ListRefs Refs;
-
 public:
 
     UrlDatabase();
@@ -44,6 +39,10 @@ public:
     Udb::ListRefs* getRefs(void);
     Udb::ListRefs* getFavoriteRefs(void);
     Udb::ListTags* getUniqTags(void);
+private:
+
+    QSqlDatabase db;
+    Udb::ListRefs Refs;
 
 };
 

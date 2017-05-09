@@ -5,6 +5,8 @@
 #include <QPushButton>
 #include <QMenu>
 #include "urldatabase.h"
+#include "QStandardItemModel"
+#include "QStandardItem"
 
 namespace Ui {
 class MainWindow;
@@ -23,12 +25,15 @@ private slots:
     void showRefs();
     void showTags();
     void showFavoriteRefs();
-
+    void on_pushButton_2_clicked();
 private:
 
     Ui::MainWindow *ui;
-    void createMenu();
     UrlDatabase *dbMain;
+
+    void createMenu();
+    QString createStringTags(const RefRecord& currentRef);
+    void addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef);
 };
 
 #endif // MAINWINDOW_H
