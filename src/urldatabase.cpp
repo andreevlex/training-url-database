@@ -341,7 +341,7 @@ Udb::ListRefs* UrlDatabase::getRefs(void)
 Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
 {
 
-    Udb::ListRefs* allFavoriteRefsDB = new Udb::ListRefs;
+    Udb::ListRefs* allFavoriteRefsDB = nullptr;
 
     QSqlQuery query(db);
 
@@ -355,7 +355,6 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
     }
 
     allFavoriteRefsDB = new Udb::ListRefs;
-
     while( query.next() )
     {
         RefRecord newRef;

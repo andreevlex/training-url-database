@@ -6,6 +6,7 @@
 #include "QStandardItem"
 #include <memory>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -100,13 +101,14 @@ QMenu * mnFile = new QMenu("Файл"); // создаём меню Файл
 void MainWindow::showRefs()
 {
 
-    QStandardItemModel *model = new QStandardItemModel;
-    QStandardItem *item;
-
     if ( !dbMain->openDB() )
     {
         return;
     }
+
+    QStandardItemModel *model = new QStandardItemModel;
+    QStandardItem *item;
+
     // Заголовки столбцов
     QStringList horizontalHeader;
     horizontalHeader.append("id");
@@ -144,13 +146,15 @@ void MainWindow::showRefs()
 
 void MainWindow::showFavoriteRefs()
 {
-    QStandardItemModel *model = new QStandardItemModel;
-    QStandardItem *item;
 
     if ( !dbMain->openDB() )
     {
         return;
     }
+
+    QStandardItemModel *model = new QStandardItemModel;
+    QStandardItem *item;
+
     // Заголовки столбцов
     QStringList horizontalHeader;
     horizontalHeader.append("id");
@@ -188,13 +192,14 @@ void MainWindow::showFavoriteRefs()
 
 void MainWindow::showTags()
 {
-    QStandardItemModel *model = new QStandardItemModel;
-    QStandardItem *item;
-
     if ( !dbMain->openDB() )
     {
         return;
     }
+
+    QStandardItemModel *model = new QStandardItemModel;
+    QStandardItem *item;
+
     // Заголовки столбцов
     QStringList horizontalHeader;
     horizontalHeader.append("name");
@@ -221,3 +226,5 @@ void MainWindow::showTags()
 
     dbMain->closeDB();
 }
+
+
