@@ -34,6 +34,7 @@ private:
     void createMenu();
     QString createStringTags(const RefRecord& currentRef);
     void addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef);
+    void createTreeView();
 };
 
 #endif // MAINWINDOW_H
