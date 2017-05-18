@@ -2,23 +2,28 @@
 #define TAG_H
 
 #include <QString>
+#include "datawrite.h"
+#include "compositepattern.h"
 
-
-class Tag
+class Tag : public AbstractComponent, public DataWrite
 {
-private:
-
-    QString Name;
-
 public:
-
-    Tag();
-    Tag(const Tag& tag_);
+    Tag(const QString &name = QString());
+    Tag(const Tag &other);
     ~Tag();
 
-    void setName(const QString& name_);
-    QString getName(void) const;
+    void setID(const long long id);
+    long long getID() const;
 
+    void setName(const QString& name);
+    QString getName(void) const;
+    bool isValid() const;
+private:
+    long long  id_m{0};
+    QString    name_m;
+
+    bool saveData(QSqlQuery &query);
+    bool checkIsNew();
 };
 
 bool operator ==(const Tag& loper, const Tag& roper);

@@ -5,25 +5,27 @@
 #include "config.h"
 #include "tag.h"
 #include <QString>
-#include <QtSql>
+#include <QtSql/QtSql>
 #include <vector>
+
+class QTableView;
+class QSqlTableModel;
+class QSqlQueryModel;
 
 namespace Udb {
     typedef std::vector<RefRecord> ListRefs;
 }
 
-class UrlDatabase
+class UrlDatabase: public QObject
 {
+    Q_OBJECT
 public:
 
-    UrlDatabase();
-    UrlDatabase(const QString& dbname_);
-    ~UrlDatabase();
+    UrlDatabase(QTableView * refRecords, QObject *parent = 0);
+    virtual ~UrlDatabase();
 
-    bool openDB();
     bool saveChangesDB();
     void Update();
-    void closeDB();
 
     bool addRef(RefRecord& newref_);
     bool delRef(const RefRecord& delref_);
@@ -38,12 +40,15 @@ public:
 
     Udb::ListRefs* getRefs(void);
     Udb::ListRefs* getFavoriteRefs(void);
-    Udb::ListTags* getUniqTags(void);
+    //Udb::ListTags* getUniqTags(void);
+
+protected:
+
+    QSqlRecord m_rec;
+    QSqlTableModel *m_RefRecordModel;
 private:
 
-    QSqlDatabase db;
     Udb::ListRefs Refs;
-
 };
 
 #endif // URLDATABASE_H

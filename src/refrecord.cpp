@@ -1,158 +1,173 @@
-#include "refrecord.h"
 #include <algorithm>
 #include <iostream>
+#include <QVariant>
+#include <QtSql>
+
+#include "refrecord.h"
+#include <typeinfo>
 
 RefRecord::RefRecord()
 {}
 
-RefRecord::RefRecord(const QString & name_, const QString & url_)
-    :Name(name_), Url(url_)
+RefRecord::RefRecord(const QString& name, const QString& url):
+    name_m(name),
+    url_m(url)
 {}
 
-RefRecord::RefRecord(const RefRecord &rref_)
+RefRecord::RefRecord(const RefRecord& other)
 {
-    Id          = rref_.Id;
-    Name        = rref_.Name;
-    Url         = rref_.Url;
-    Favorite    = rref_.Favorite;
-    Modified    = rref_.Modified;
-    Tags        = rref_.Tags;
+    id_m          = other.id_m;
+    name_m        = other.name_m;
+    url_m         = other.url_m;
+    favorite_m    = other.favorite_m;
+    modified_m    = other.modified_m;
+
+    tags_m.clear();
+    for(TagsList::const_iterator it_tag = other.tags_m.begin(); it_tag != other.tags_m.end(); ++it_tag)
+    {
+       if( const Tag *other_tag = dynamic_cast<const Tag *>(*it_tag) )
+       {
+           Tag* newTag = new Tag(*other_tag);
+           tags_m.add(newTag);
+       }
+    }
 }
 
 RefRecord::~RefRecord()
 {}
 
-void RefRecord::setName(const QString & name_)
+void RefRecord::setName(const QString& name)
 {
-    if( !name_.isEmpty() )
+    if( !name.isEmpty() )
     {
-        Name        = name_;
-        Modified    = true;
+        name_m      = name;
+        modified_m  = true;
     }
 }
 
 QString RefRecord::getName(void) const
 {
-    return Name;
+    return name_m;
 }
 
-void RefRecord::setUrl(const QString & url_)
+void RefRecord::setUrl(const QString & url)
 {
-    if( !url_.isEmpty() )
+    if( !url.isEmpty() )
     {
-        Url         = url_;
-        Modified    = true;
+        url_m         = url;
+        modified_m    = true;
     }
 }
 
 QString RefRecord::getUrl(void) const
 {
-    return Url;
+    return url_m;
 }
 
-void RefRecord::setID(const long long int id_)
+void RefRecord::setID(const long long int id)
 {
 
-    if( id_ < 0 ){
+    if( id < 0 )
+    {
         std::cerr << "Не достутимое значение ID" << std::endl;
         return;
     }
 
-    Id          = id_;
-    Modified    = true;
+    id_m          = id;
+    modified_m    = true;
 }
 
 long long RefRecord::getID() const
 {
-    return Id;
+    return id_m;
 }
 
-void RefRecord::setFavorite(const bool fav_)
+void RefRecord::setFavorite(const bool fav)
 {
-    Favorite = fav_;
-    Modified = true;
+    favorite_m = fav;
+    modified_m = true;
 }
 
 bool RefRecord::getFavorite(void) const
 {
-    return Favorite;
+    return favorite_m;
 }
 
-void RefRecord::setDateCreate(const QDateTime & dateCreate_)
+void RefRecord::setDateCreate(const QDateTime& dateCreate)
 {
-    QDate dateMin(2017, 01, 01);
-    QDateTime date_t_min(dateMin);
+    QDateTime date_t_min = QDateTime::currentDateTime().addDays(-1);
 
-    if( dateCreate_ < date_t_min )
+    if( dateCreate < date_t_min )
     {
         std::cout << "Новая дата не может быть меньше 01.01.2017" << std::endl;
         return;
     }
-    dateCreate = dateCreate_;
-    Modified = true;
+    dateCreate_m = dateCreate;
+    modified_m = true;
 }
 
 QDateTime RefRecord::getDateCreate(void) const
 {
-    return dateCreate;
-}
-
-void RefRecord::addTag(const Tag & newtag_)
-{
-    if( !Tags.empty() )
-    {
-        auto finder = std::find(Tags.begin(), Tags.end(), newtag_);
-        if( finder != Tags.end() )
-        {
-            return;
-        }
-    }
-
-    Tags.push_back(newtag_);
-    Modified = true;
-}
-
-void RefRecord::delTag(const Udb::ListTags::const_iterator& deltag_)
-{
-   Tags.erase(deltag_);
-   Modified = true;
-}
-
-Tag RefRecord::getTag(const QString & nametag_) const
-{
-    if( !Tags.empty() )
-    {
-        for( auto it = Tags.begin(); it != Tags.end(); ++it)
-        {
-            if( it->getName() == nametag_ )
-            {
-                return *it;
-            }
-        }
-        return Tag();
-    }
-
-    return Tag();
-}
-
-Udb::ListTags::const_iterator RefRecord::firstTag() const
-{
-    return Tags.begin();
-}
-
-Udb::ListTags::const_iterator RefRecord::lastTag() const
-{
-    return Tags.end();
-}
-
-size_t RefRecord::tagCount() const
-{
-    return Tags.size();
+    return dateCreate_m;
 }
 
 bool RefRecord::getModified() const
 {
-    return Modified;
+    return modified_m;
+}
+
+bool RefRecord::saveData(QSqlQuery &query)
+{
+
+    if( checkIsNew() )
+    {
+       query.prepare("INSERT INTO refs (datecreate, favorite, name, url ) "
+                     "VALUES (:datecreate, :favorite, :name, :url)");
+    }
+    else
+    {
+        query.prepare("UPDATE refs "
+                      "SET "
+                      "datecreate = :datecreate, "
+                      "favorite = :favorite, "
+                      "name = :name, "
+                      "url = :url "
+                      "WHERE id = :ID ");
+    query.bindValue(":ID", id_m);
+    }
+
+    query.bindValue(":datecreate",  dateCreate_m.toString(Qt::ISODate));
+    query.bindValue(":favorite",    favorite_m);
+    query.bindValue(":name",        name_m);
+    query.bindValue(":url",         url_m);
+
+    if( !query.exec() )
+    {
+        std::cerr << query.lastError().text().toStdString();
+        return false;
+    }
+
+    if( checkIsNew() )
+    {
+       setID(query.lastInsertId().toLongLong());
+    }
+
+    if( !tags_m.save() )
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool RefRecord::checkIsNew()
+{
+    return ( 0 == id_m );
+}
+
+TagsList& RefRecord::getTags()
+{
+    return tags_m;
 }
 
 bool operator ==(const RefRecord& loper, const RefRecord& roper)

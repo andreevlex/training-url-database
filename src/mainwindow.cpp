@@ -1,27 +1,54 @@
+#include <memory>
+#include <QFileSystemModel>
+#include <QDir>
+#include <QFileInfo>
+#include <QtSql>
+#include <QMessageBox>
+
+#include "makestring.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "urldatabase.h"
 #include "config.h"
-#include "QStandardItemModel"
-#include <QStandardItem>
-#include <memory>
 #include "urllockchecker.h"
-#include <QFileSystemModel>
+#include "initdb.h"
+#include "workingdb.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    dbMain(new UrlDatabase())
+    ui(new Ui::MainWindow)
 {
+    configureProgram();
+
+    // initialize the database
+    QSqlError err = initDB();
+    if (err.type() != QSqlError::NoError) {
+        showError(err);
+        return;
+    }
+
     ui->setupUi(this);
+
+    urlDB_m = new UrlDatabase(ui->RefRecordTV, this);
+
     createMenu();
-    createTreeView();
+    //createTreeView();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete dbMain;
+}
+
+void MainWindow::configureProgram()
+{
+    QDir dconf;
+    dconf.setPath(DATA_LOCATION);
+
+    if( !dconf.exists() )
+    {
+        dconf.mkpath(DATA_LOCATION);
+    }
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -105,16 +132,16 @@ void MainWindow::createMenu()
     ui->menuBar->addMenu(mnHelp);
 }
 
-QString MainWindow::createStringTags(const RefRecord& currentRef)
-{
-    QString allTags("");
+//QString MainWindow::createStringTags(const RefRecord& currentRef)
+//{
+//    QString allTags("");
 
-    for(auto ittags = currentRef.firstTag(); ittags != currentRef.lastTag(); ++ittags)
-    {
-        allTags += ittags->getName() + " ";
-    }
-    return allTags;
-}
+//    for(auto ittags = currentRef.firstTag(); ittags != currentRef.lastTag(); ++ittags)
+//    {
+//        allTags += ittags->getName() + " ";
+//    }
+//    return allTags;
+//}
 
 void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef)
 {
@@ -129,7 +156,7 @@ void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lin
     item = new QStandardItem(currentRef.getUrl());
     model->setItem(lineNum, 2, item);
 
-    item = new QStandardItem(createStringTags(currentRef));
+    item = new QStandardItem("");
     model->setItem(lineNum, 3, item);
 
     /* реализация не функционального требования */
@@ -153,11 +180,6 @@ void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lin
 void MainWindow::showRefs()
 {
 
-    if ( !dbMain->openDB() )
-    {
-        return;
-    }
-
     QStandardItemModel *model = new QStandardItemModel;
 
     // Заголовки столбцов
@@ -171,7 +193,7 @@ void MainWindow::showRefs()
 
     model->setHorizontalHeaderLabels(horizontalHeader);
 
-    std::unique_ptr<Udb::ListRefs> allRefs(dbMain->getRefs());
+    std::unique_ptr<Udb::ListRefs> allRefs(urlDB_m->getRefs());
 
     if(allRefs.get() != nullptr)
     {
@@ -183,61 +205,48 @@ void MainWindow::showRefs()
         }
     }
 
-    ui->tableView1->setModel(model);
-    ui->tableView1->resizeRowsToContents();
-    ui->tableView1->resizeColumnsToContents();
+    ui->RefRecordTV->setModel(model);
+    ui->RefRecordTV->resizeRowsToContents();
+    ui->RefRecordTV->resizeColumnsToContents();
 
-    dbMain->closeDB();
 }
 
 void MainWindow::showFavoriteRefs()
 {
+    QStandardItemModel *model = new QStandardItemModel;
 
-//    if ( !dbMain->openDB() )
-//    {
-//        return;
-//    }
+    // Заголовки столбцов
+    QStringList horizontalHeader;
+    horizontalHeader.append("id");
+    horizontalHeader.append("name");
+    horizontalHeader.append("url");
+    horizontalHeader.append("tags");
+    horizontalHeader.append("locked");
 
-//    QStandardItemModel *model = new QStandardItemModel;
+    model->setHorizontalHeaderLabels(horizontalHeader);
 
-//    // Заголовки столбцов
-//    QStringList horizontalHeader;
-//    horizontalHeader.append("id");
-//    horizontalHeader.append("name");
-//    horizontalHeader.append("url");
-//    horizontalHeader.append("tags");
-//    horizontalHeader.append("locked");
+    std::unique_ptr<Udb::ListRefs> allFavoriteRefs(urlDB_m->getFavoriteRefs());
 
-//    model->setHorizontalHeaderLabels(horizontalHeader);
+    if(allFavoriteRefs.get() != nullptr)
+    {
+        int i = 0;
+        for(auto it = allFavoriteRefs->begin(); it != allFavoriteRefs->end(); ++it)
+        {
+            addLineToRefs(model, i, *it);
 
-//    std::unique_ptr<Udb::ListRefs> allFavoriteRefs(dbMain->getFavoriteRefs());
+            i++;
+        }
+    }
 
-//    if(allFavoriteRefs.get() != nullptr)
-//    {
-//        int i = 0;
-//        for(auto it = allFavoriteRefs->begin(); it != allFavoriteRefs->end(); ++it)
-//        {
-//            addLineToRefs(model, i, *it);
+    ui->RefRecordTV->setModel(model);
+    ui->RefRecordTV->resizeRowsToContents();
+    ui->RefRecordTV->resizeColumnsToContents();
 
-//            i++;
-//        }
-//    }
-
-//    ui->tableView1->setModel(model);
-//    ui->tableView1->resizeRowsToContents();
-//    ui->tableView1->resizeColumnsToContents();
-
-//    dbMain->closeDB();
 }
 
 void MainWindow::showTags()
 {
-//    if ( !dbMain->openDB() )
-//    {
-//        return;
-//    }
-
-//    QStandardItemModel *model = new QStandardItemModel;
+//        QStandardItemModel *model = new QStandardItemModel;
 //    QStandardItem *item;
 
 //    // Заголовки столбцов
@@ -246,7 +255,7 @@ void MainWindow::showTags()
 
 //    model->setHorizontalHeaderLabels(horizontalHeader);
 
-//    std::unique_ptr<Udb::ListTags> allUniqTags(dbMain->getUniqTags());
+//    std::unique_ptr<Udb::ListTags> allUniqTags(urlDB_m->getUniqTags());
 
 //    if(allUniqTags.get() != nullptr)
 //    {
@@ -260,28 +269,24 @@ void MainWindow::showTags()
 //        }
 //    }
 
-//    ui->tableView1_2->setModel(model);
-//    ui->tableView1_2->resizeRowsToContents();
-//    ui->tableView1_2->resizeColumnsToContents();
-
-//    dbMain->closeDB();
+//    ui->TRV->setModel(model);
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-//    UrlLockChecker newChecker("http://www.rutracker.org/");
+    UrlLockChecker newChecker("http://www.rutracker.org/");
 
-//    if(newChecker.isValid())
-//    {
-//        if(newChecker.isLock())
-//        {
-//            ui->textEdit_2->insertPlainText("rutracker.org в списке запрета!\n");
-//        }
-//        else
-//        {
-//            ui->textEdit_2->insertPlainText("rutracker.org сайт не входит в список\n");
-//        }
-//    }
+    if(newChecker.isValid())
+    {
+        if(newChecker.isLock())
+        {
+            QMessageBox::information(this, "","rutracker.org в списке запрета!\n");
+        }
+        else
+        {
+            QMessageBox::information(this, "", "rutracker.org сайт не входит в список\n");
+        }
+    }
 }
 
 
@@ -290,5 +295,12 @@ void MainWindow::createTreeView()
     QFileSystemModel *model = new QFileSystemModel;
     model->setRootPath(QDir::currentPath());
 
-    ui->treeView->setModel(model);
+    ui->TRV->setModel(model);
 }
+
+void MainWindow::showError(const QSqlError &err)
+{
+    QMessageBox::critical(this, "Unable to initialize Database",
+                "Error initializing database: " + err.text());
+}
+

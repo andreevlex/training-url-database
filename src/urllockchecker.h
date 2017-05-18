@@ -9,7 +9,6 @@
 #include <QtNetwork/QNetworkReply>
 #include <QUrl>
 #include <QTextCodec>
-//#include "lockitem.h"
 
 class UrlLockChecker: public QObject
 {

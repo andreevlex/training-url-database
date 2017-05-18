@@ -13,12 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     refrecord.cpp \
     urldatabase.cpp \
     tag.cpp \
     urllockchecker.cpp \
-    lockitem.cpp
+    datawrite.cpp \
+    tagslist.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
@@ -26,14 +27,23 @@ HEADERS  += mainwindow.h \
     urldatabase.h \
     tag.h \
     urllockchecker.h \
-    lockitem.h
+    makestring.h \
+    datawrite.h \
+    tagslist.h \
+    initdb.h \
+    compositepattern.h \
+    workingdb.h
 
 FORMS    += ui/mainwindow.ui \
     ui/addreferencedialog.ui
 
-QMAKE_CXXFLAGS += -std=c++11 -lGL
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CFLAGS_WARN_ON = -Wall
 
 RESOURCES +=
+
+DISTFILES += \
+    diagram.qmodel
 
 
 

@@ -1,164 +1,109 @@
-#include "urldatabase.h"
-#include "config.h"
 #include <iostream>
+#include <iosfwd>
 #include <QDir>
 #include <iterator>
 #include <memory>
 #include <QFileInfo>
+#include <stdexcept>
+#include <QTableView>
+#include <QTreeView>
 
-UrlDatabase::UrlDatabase()
+#include "urldatabase.h"
+#include "tag.h"
+#include "workingdb.h"
+
+UrlDatabase::UrlDatabase(QTableView * refRecords, QObject *parent)
+: QObject(parent)
 {
-    db = QSqlDatabase::addDatabase(TYPE_DB);
-    db.setDatabaseName(BASE_NAME);
-}
 
-UrlDatabase::UrlDatabase(const QString& dbname_)
-{
-    db = QSqlDatabase::addDatabase(TYPE_DB);
-
-    if( dbname_.isEmpty() )
-    {
-        db.setDatabaseName(BASE_NAME);
-        return;
-    }
-
-    QString pathToDB = dbname_;
-    qDebug() << pathToDB;
-
-    QFileInfo checkFile(pathToDB);
-
-    if (checkFile.isFile()) {
-        db.setDatabaseName(pathToDB);
-    }
+    m_RefRecordModel = new QSqlTableModel (this, currentDatabase());
+    m_RefRecordModel->setTable("refs");
+    m_RefRecordModel->select();
+    m_RefRecordModel->setEditStrategy(QSqlTableModel::OnFieldChange);
+    refRecords->setModel(m_RefRecordModel);
 }
 
 UrlDatabase::~UrlDatabase()
 {
-    db.close();
 }
 
-bool UrlDatabase::openDB()
-{
-    if( db.isOpen() )
-    {
-        return true;
-    }
+//bool UrlDatabase::saveChangesDB()
+//{
 
-    bool result = db.open();
-    if( result )
-    {
-        Update();
-    }
-    return result;
-}
+//    if( !db.isOpen() )
+//    {
+//        std::cerr << "Необходимо сначала открыть базу данных!" << std::endl;
+//        return false;
+//    }
 
-bool UrlDatabase::saveChangesDB()
-{
+//    if( Refs.empty() )
+//    {
+//        return true;
+//    }
 
-    if( !db.isOpen() )
-    {
-        std::cerr << "Необходимо сначала открыть базу данных!" << std::endl;
-        return false;
-    }
+//    for (auto it = Refs.begin(); it != Refs.end(); it++)
+//    {
 
-    if( Refs.empty() )
-    {
-        return true;
-    }
+//        if( it->getModified() )
+//        {
+//            QSqlQuery query(db);
 
-    for (auto it = Refs.begin(); it != Refs.end(); it++)
-    {
+//            query.prepare("UPDATE refs "
+//                          "SET "
+//                          "datecreate = :datecreate, "
+//                          "favorite = :favorite, "
+//                          "name = :name, "
+//                          "url = :url "
+//                          "WHERE id = :ID ");
+//            query.bindValue(":datecreate", it->getDateCreate().toString(Qt::ISODate));
+//            query.bindValue(":favorite", it->getFavorite());
+//            query.bindValue(":name", it->getName());
+//            query.bindValue(":url", it->getUrl());
+//            query.bindValue(":ID", it->getID());
 
-        if( it->getModified() )
-        {
-            QSqlQuery query(db);
+//            if( !query.exec() )
+//            {
+//                qDebug() << query.lastError().text();
+//                return false;
+//            }
+//            else
+//            {
+//                for(auto ittags = it->firstTag(); ittags != it->lastTag(); ittags++)
+//                {
+//                    QSqlQuery queryTag(db);
 
-            query.prepare("UPDATE refs "
-                          "SET "
-                          "datecreate = :datecreate, "
-                          "favorite = :favorite, "
-                          "name = :name, "
-                          "url = :url "
-                          "WHERE id = :ID ");
-            query.bindValue(":datecreate", it->getDateCreate().toString(Qt::ISODate));
-            query.bindValue(":favorite", it->getFavorite());
-            query.bindValue(":name", it->getName());
-            query.bindValue(":url", it->getUrl());
-            query.bindValue(":ID", it->getID());
+//                    query.prepare("UPDATE tags "
+//                                  "SET "
+//                                  "TagName = :TAGNAME "
+//                                  "WHERE fk_id = :ID ");
+//                    query.bindValue(":TAGNAME", ittags->getName());
+//                    query.bindValue(":ID", it->getID());
 
-            if( !query.exec() )
-            {
-                qDebug() << query.lastError().text();
-                return false;
-            }
-            else
-            {
-                for(auto ittags = it->firstTag(); ittags != it->lastTag(); ittags++)
-                {
-                    QSqlQuery queryTag(db);
+//                    if( !query.exec() )
+//                    {
+//                       qDebug() << query.lastError().text();
+//                       return false;
+//                    }
+//                }
 
-                    query.prepare("UPDATE tags "
-                                  "SET "
-                                  "TagName = :TAGNAME "
-                                  "WHERE fk_id = :ID ");
-                    query.bindValue(":TAGNAME", ittags->getName());
-                    query.bindValue(":ID", it->getID());
+//                return true;
+//            }
+//        }
+//    }
 
-                    if( !query.exec() )
-                    {
-                       qDebug() << query.lastError().text();
-                       return false;
-                    }
-                }
+//    return true;
 
-                return true;
-            }
-        }
-    }
-
-    return true;
-
-}
-
-void UrlDatabase::closeDB()
-{
-    db.close();
-    Refs.clear();
-}
+//}
 
 bool UrlDatabase::addRef(RefRecord& newref_)
 {
-    QSqlQuery query(db);
-
-    query.prepare("INSERT INTO refs (datecreate, favorite, name, url ) "
-                      "VALUES (:datecreate, :favorite, :name, :url)");
-    query.bindValue(":datecreate", newref_.getDateCreate().toString(Qt::ISODate));
-    query.bindValue(":favorite", static_cast<int>(newref_.getFavorite()));
-    query.bindValue(":name", newref_.getName());
-    query.bindValue(":url", newref_.getUrl());
-
-    if( !query.exec() )
-    {
-        qDebug() << query.lastError().text();
-        return false;
-    }
-    else
-    {
-        newref_.setID(query.lastInsertId().toLongLong());
-        for(auto it = newref_.firstTag(); it != newref_.lastTag(); it++)
-        {
-            addTag(newref_, *it);
-        }
-
-        Update();
-        return true;
-    }
+    return newref_.save();
 }
 
 bool UrlDatabase::delRef(const RefRecord& delref_)
 {
 
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     query.prepare("DELETE FROM tags WHERE tags.fk_id = :ID"
                   ";"
@@ -200,7 +145,7 @@ const RefRecord& UrlDatabase::getRef(const long long int id_, bool& refFind) con
 size_t UrlDatabase::favoriteRefsCount(void) const
 {
 
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     if( !query.exec("SELECT "
                     "COUNT(*) as cn "
@@ -224,7 +169,7 @@ size_t UrlDatabase::favoriteRefsCount(void) const
 
 bool UrlDatabase::addTag(const RefRecord& parent_, const Tag& newtag_)
 {
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     query.prepare("INSERT INTO tags (fk_id, TagName) "
                       "VALUES (:FK_ID, :TAGNAME)");
@@ -244,7 +189,7 @@ bool UrlDatabase::addTag(const RefRecord& parent_, const Tag& newtag_)
 
 bool UrlDatabase::delTag(const RefRecord& parent_, const Tag deltag_)
 {
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     query.prepare("DELETE FROM tags "
                   "WHERE tags.fk_id = :FK_ID AND tags.TagName = :TAGNAME");
@@ -264,7 +209,7 @@ bool UrlDatabase::delTag(const RefRecord& parent_, const Tag deltag_)
 
 size_t UrlDatabase::tagsCount(void) const
 {
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     if( !query.exec("SELECT "
                     "Count(DISTINCT tags.TagName) as ctags "
@@ -289,7 +234,7 @@ Udb::ListRefs* UrlDatabase::getRefs(void)
 
     Udb::ListRefs* allRefsDB = nullptr;
 
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     if( !query.exec("SELECT "
                     "refs.datecreate, refs.favorite, refs.id, refs.name, refs.url "
@@ -312,7 +257,7 @@ Udb::ListRefs* UrlDatabase::getRefs(void)
                     query.value("datecreate").toString(), Qt::ISODate);
         newRef.setDateCreate(newDate);
 
-        QSqlQuery queryTags(db);
+        QSqlQuery queryTags(currentDatabase());
         queryTags.prepare("SELECT "
                           "tags.TagName "
                           "FROM tags "
@@ -326,9 +271,9 @@ Udb::ListRefs* UrlDatabase::getRefs(void)
         {
             while( queryTags.next() )
             {
-                Tag newTag;
-                newTag.setName(queryTags.value(0).toString());
-                newRef.addTag(newTag);
+                Tag* newTag = new Tag();
+                newTag->setName(queryTags.value(0).toString());
+                newRef.getTags().add(newTag);
             }
         }
 
@@ -343,7 +288,7 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
 
     Udb::ListRefs* allFavoriteRefsDB = nullptr;
 
-    QSqlQuery query(db);
+    QSqlQuery query(currentDatabase());
 
     if( !query.exec("SELECT "
                     "refs.datecreate, refs.favorite, refs.id, refs.name, refs.url "
@@ -366,7 +311,7 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
                     query.value("datecreate").toString(), Qt::ISODate);
         newRef.setDateCreate(newDate);
 
-        QSqlQuery queryTags(db);
+        QSqlQuery queryTags(currentDatabase());
         queryTags.prepare("SELECT "
                           "tags.TagName "
                           "FROM tags "
@@ -380,9 +325,9 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
         {
             while( queryTags.next() )
             {
-                Tag newTag;
-                newTag.setName(queryTags.value(0).toString());
-                newRef.addTag(newTag);
+                Tag* newTag = new Tag();
+                newTag->setName(queryTags.value(0).toString());
+                newRef.getTags().add(newTag);
             }
         }
 
@@ -392,30 +337,30 @@ Udb::ListRefs* UrlDatabase::getFavoriteRefs(void)
     return allFavoriteRefsDB;
 }
 
-Udb::ListTags *UrlDatabase::getUniqTags(void)
-{
-    Udb::ListTags* allTagsDB = nullptr;
+//Udb::ListTags *UrlDatabase::getUniqTags(void)
+//{
+//    Udb::ListTags* allTagsDB = nullptr;
 
-    QSqlQuery query(db);
+//    QSqlQuery query(currentDatabase());
 
-    if( !query.exec("SELECT DISTINCT tags.TagName "
-                    "FROM tags") )
-    {
-        qDebug() << query.lastError().text();
-        return allTagsDB;
-    }
+//    if( !query.exec("SELECT DISTINCT tags.TagName "
+//                    "FROM tags") )
+//    {
+//        qDebug() << query.lastError().text();
+//        return allTagsDB;
+//    }
 
-    allTagsDB = new Udb::ListTags;
+//    allTagsDB = new Udb::ListTags;
 
-    while( query.next() )
-    {
-        Tag newTag;
-        newTag.setName(query.value(0).toString());
-        allTagsDB->push_back(newTag);
-    }
+//    while( query.next() )
+//    {
+//        Tag newTag;
+//        newTag.setName(query.value(0).toString());
+//        allTagsDB->push_back(newTag);
+//    }
 
-    return allTagsDB;
-}
+//    return allTagsDB;
+//}
 
 void UrlDatabase::Update()
 {

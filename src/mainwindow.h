@@ -4,9 +4,11 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QMenu>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QtSql>
+
 #include "urldatabase.h"
-#include "QStandardItemModel"
-#include "QStandardItem"
 
 namespace Ui {
 class MainWindow;
@@ -29,12 +31,14 @@ private slots:
 private:
 
     Ui::MainWindow *ui;
-    UrlDatabase *dbMain;
+
+    UrlDatabase* urlDB_m;
 
     void createMenu();
-    QString createStringTags(const RefRecord& currentRef);
+    void showError(const QSqlError &err);
     void addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef);
     void createTreeView();
+    void configureProgram();
 };
 
 #endif // MAINWINDOW_H
