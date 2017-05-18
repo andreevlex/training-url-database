@@ -18,33 +18,33 @@ class AbstractComponent
     }
 };
 
-class TagsList: public AbstractComponent
-{
-public:
-    typedef std::vector<AbstractComponent*>::iterator iterator;
-    typedef std::vector<AbstractComponent*>::const_iterator const_iterator;
+//class TagsList: public AbstractComponent
+//{
+//public:
+//    typedef std::vector<AbstractComponent*>::iterator iterator;
+//    typedef std::vector<AbstractComponent*>::const_iterator const_iterator;
 
-    TagsList() {}
-    ~TagsList();
+//    TagsList() {}
+//    ~TagsList();
 
-    void add(AbstractComponent* element);
-    void remove(AbstractComponent* element);
-    void clear();
-    size_t count() const;
-    TagsList* getComposite(){
-        return this;
-    }
+//    void add(AbstractComponent* element);
+//    void remove(AbstractComponent* element);
+//    void clear();
+//    size_t count() const;
+//    TagsList* getComposite(){
+//        return this;
+//    }
 
-    iterator begin();
-    iterator end();
+//    iterator begin();
+//    iterator end();
 
-    const_iterator begin() const;
-    const_iterator end() const;
-    bool save();
+//    const_iterator begin() const;
+//    const_iterator end() const;
+//    bool save();
 
-    //Tag findByName(const QString& nametag) const;
-  private:
-   std::vector<AbstractComponent*> list_m;
-};
+//    //Tag findByName(const QString& nametag) const;
+//  private:
+//   std::vector<AbstractComponent*> list_m;
+//};
 
 #endif // COMPOSITEPATTERN_H

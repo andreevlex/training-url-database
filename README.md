@@ -13,28 +13,7 @@
 
 ## Настройка
 
-Сама база данных sqllite должна быть создана заранее и распологаться
-~/.local/share/UrlDataBase/base.db
+Для сборки выполнить команду
 
-1. Вариант. Создать базу внешними средствами
-
-[Создание SQLite базы данных в DB Browser for SQLite](http://blog.harrix.org/article/5154)
-Команды для создания базы:
-```sql
-CREATE TABLE `refs` (
-	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
-	`name`	TEXT NOT NULL,
-	`datecreate`	TEXT,
-	`url`	TEXT,
-	`favorite`	INTEGER DEFAULT 0
-);
-
-CREATE TABLE `tags` (
-	`fk_id`	INTEGER,
-	`TagName`	TEXT
-);
-```
-
-2.Вариант. Использовать базу из каталогов исходников.
-
+`sudo apt-get install libgl1-mesa-dev`
 

@@ -44,6 +44,3 @@ RESOURCES +=
 
 DISTFILES += \
     diagram.qmodel
-
-
-
