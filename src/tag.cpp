@@ -75,18 +75,13 @@ bool Tag::saveData(QSqlQuery &query)
         return false;
     }
 
-    QString queryString();
     if( checkIsNew() )
     {
-       query.prepare("INSERT INTO tags (TagName) "
-                     "VALUES (:TAGNAME)");
+       query.prepare("INSERT INTO tags (name) VALUES (:TAGNAME)");
     }
     else
     {
-        query.prepare("UPDATE tags "
-                      "SET "
-                      "TagName = :TAGNAME "
-                      "WHERE id = :ID ");
+        query.prepare("UPDATE tags SET name = :TAGNAME WHERE id = :ID ");
         query.bindValue(":ID", id_m);
     }
     query.bindValue(":TAGNAME", name_m);

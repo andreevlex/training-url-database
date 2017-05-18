@@ -1,7 +1,6 @@
 #ifndef TAGSLIST_H
 #define TAGSLIST_H
 
-//#include "tag.h"
 #include "compositepattern.h"
 
 class TagsList: public AbstractComponent

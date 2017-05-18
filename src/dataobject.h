@@ -1,13 +1,13 @@
-#ifndef DATAWRITE_H
-#define DATAWRITE_H
+#ifndef DATAOBJECT_H
+#define DATAOBJECT_H
 
 #include <QtSql/QSqlQuery>
 
-class DataWrite
+class DataObject
 {
 public:
-    DataWrite();
-    virtual ~DataWrite();
+    DataObject();
+    virtual ~DataObject();
 
     bool save();
     bool isNew();
@@ -16,4 +16,4 @@ private:
     virtual bool checkIsNew() = 0;
 };
 
-#endif // DATAWRITE_H
+#endif // DATAOBJECT_H

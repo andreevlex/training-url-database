@@ -18,8 +18,9 @@ SOURCES += main.cpp\
     urldatabase.cpp \
     tag.cpp \
     urllockchecker.cpp \
-    datawrite.cpp \
-    tagslist.cpp
+    tagslist.cpp \
+    factorymethod.cpp \
+    dataobject.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
@@ -28,11 +29,12 @@ HEADERS  += mainwindow.h \
     tag.h \
     urllockchecker.h \
     makestring.h \
-    datawrite.h \
     tagslist.h \
     initdb.h \
     compositepattern.h \
-    workingdb.h
+    workingdb.h \
+    factorymethod.h \
+    dataobject.h
 
 FORMS    += ui/mainwindow.ui \
     ui/addreferencedialog.ui

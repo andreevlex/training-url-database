@@ -121,18 +121,11 @@ bool RefRecord::saveData(QSqlQuery &query)
 
     if( checkIsNew() )
     {
-       query.prepare("INSERT INTO refs (datecreate, favorite, name, url ) "
-                     "VALUES (:datecreate, :favorite, :name, :url)");
+       query.prepare("INSERT INTO refs (datecreate, favorite, name, url ) VALUES (:datecreate, :favorite, :name, :url)");
     }
     else
     {
-        query.prepare("UPDATE refs "
-                      "SET "
-                      "datecreate = :datecreate, "
-                      "favorite = :favorite, "
-                      "name = :name, "
-                      "url = :url "
-                      "WHERE id = :ID ");
+        query.prepare("UPDATE refs SET datecreate = :datecreate, favorite = :favorite, name = :name, url = :url WHERE id = :ID");
     query.bindValue(":ID", id_m);
     }
 

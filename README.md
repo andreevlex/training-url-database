@@ -17,3 +17,10 @@
 
 `sudo apt-get install libgl1-mesa-dev`
 
+
+## Примененные шаблоны проектирования
+
+класс DataObject - Паттерн Template Method (шаблонный метод)
+класс TagsList -  Паттерн Composite (компоновщик)
+класс DataObjectFactory - Паттерн Фабричный метод (Factory Method)
+

@@ -1,22 +1,22 @@
 #include <QtSql/QtSql>
-#include "datawrite.h"
+#include "dataobject.h"
 #include "workingdb.h"
 
-DataWrite::DataWrite()
+DataObject::DataObject()
 {}
 
-DataWrite::~DataWrite()
+DataObject::~DataObject()
 {
 
 }
 
-bool DataWrite::save()
+bool DataObject::save()
 {
     QSqlQuery preQuery = QSqlQuery(currentDatabase());
     return saveData(preQuery);
 }
 
-bool DataWrite::isNew()
+bool DataObject::isNew()
 {
     return checkIsNew();
 }

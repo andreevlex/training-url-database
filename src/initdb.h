@@ -32,7 +32,7 @@ QSqlError initDB()
          if(!query_m.exec( QLatin1String(
             "CREATE TABLE `tags` ("
             "`id` INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "`TagName` TEXT "
+            "`name` TEXT "
             ");") ) )
          {
              return query_m.lastError();

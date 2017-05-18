@@ -2,10 +2,10 @@
 #define TAG_H
 
 #include <QString>
-#include "datawrite.h"
+#include "dataobject.h"
 #include "compositepattern.h"
 
-class Tag : public AbstractComponent, public DataWrite
+class Tag : public AbstractComponent, public DataObject
 {
 public:
     Tag(const QString &name = QString());

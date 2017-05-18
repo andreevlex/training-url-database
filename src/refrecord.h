@@ -5,10 +5,10 @@
 #include <QDateTime>
 #include <vector>
 #include "tag.h"
-#include "datawrite.h"
 #include "tagslist.h"
+#include "dataobject.h"
 
-class RefRecord: public DataWrite
+class RefRecord: public DataObject
 {
 public:
     RefRecord();
