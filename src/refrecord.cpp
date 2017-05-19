@@ -7,12 +7,16 @@
 #include <typeinfo>
 
 RefRecord::RefRecord()
-{}
+{
+    setDateCreate(QDateTime::currentDateTimeUtc());
+}
 
 RefRecord::RefRecord(const QString& name, const QString& url):
     name_m(name),
     url_m(url)
-{}
+{
+    setDateCreate(QDateTime::currentDateTimeUtc());
+}
 
 RefRecord::RefRecord(const RefRecord& other)
 {

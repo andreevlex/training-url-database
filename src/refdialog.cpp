@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "refdialog.h"
 #include "ui_refdialog.h"
 #include "factorymethod.h"
@@ -8,8 +10,6 @@ RefDialog::RefDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-
-
 
 RefDialog::~RefDialog()
 {
@@ -28,13 +28,13 @@ void RefDialog::on_buttonBox_rejected()
 
 void RefDialog::on_buttonBox_accepted()
 {
-//    RefRecords RefRecords_m;
-//    RefRecord* newRef = RefRecords.create();
-//    newRef->setName(ui->editName->text());
-//    newRef->setUrl(ui->plainUrl->toPlainText());
+    RefRecords RefRecords_m;
+    std::unique_ptr<RefRecord> newRef(dynamic_cast<RefRecord*>(RefRecords_m.create()));
+    newRef->setName(ui->editName->text());
+    newRef->setUrl(ui->plainUrl->toPlainText());
 
-//    if( newRef->save() )
-//    {
-//        this->close();
-//    }
+    if( newRef->save() )
+    {
+        this->close();
+    }
 }
