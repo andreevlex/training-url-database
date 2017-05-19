@@ -2,6 +2,7 @@
 #define FACTORYMETHOD_H
 
 #include <QString>
+#include <QtSql>
 
 #include "dataobject.h"
 #include "refrecord.h"
@@ -21,7 +22,7 @@ class RefRecords: public DataObjectFactory
   public:
     DataObject* create();
     DataObject* findByCode(const long long id);
-    static bool remove(long long id);
+    static QSqlError remove(long long id);
   private:
     void createTags(RefRecord* parent);
 };
@@ -31,7 +32,7 @@ class Tags: public DataObjectFactory
   public:
     DataObject* create();
     DataObject* findByCode(const long long id);
-    static bool remove(long long id);
+    static QSqlError remove(long long id);
 };
 
 #endif // FACTORYMETHOD_H

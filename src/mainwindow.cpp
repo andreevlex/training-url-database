@@ -171,8 +171,8 @@ void MainWindow::checkUrl()
 
 void MainWindow::showError(const QSqlError &err)
 {
-    QMessageBox::critical(this, "Unable to initialize Database",
-                "Error initializing database: " + err.text());
+    QMessageBox::critical(this, "Error Database",
+                "Ошибка работы с базой данный: " + err.text());
 }
 
 void MainWindow::on_pbAddTag_clicked()
@@ -207,7 +207,12 @@ void MainWindow::on_pbDelTag_clicked()
     {
         return;
     }
-    Tags::remove(id_tag);
+
+    QSqlError err = Tags::remove(id_tag);
+    if (err.type() != QSqlError::NoError) {
+        showError(err);
+        return;
+    }
     urlDB_m->update();
 }
 
@@ -243,7 +248,12 @@ void MainWindow::on_pbDelRefRecord_clicked()
     {
         return;
     }
-    RefRecords::remove(id_ref);
+
+    QSqlError err = RefRecords::remove(id_ref);
+    if (err.type() != QSqlError::NoError) {
+        showError(err);
+        return;
+    }
     urlDB_m->update();
 }
 

@@ -1,4 +1,3 @@
-#include <QtSql>
 #include <iostream>
 
 #include "factorymethod.h"
@@ -94,32 +93,43 @@ DataObject* Tags::findByCode(const long long id)
     return newTag;
 }
 
-bool RefRecords::remove(long long id)
+QSqlError RefRecords::remove(long long id)
 {
     QSqlQuery preQuery(currentDatabase());
-    preQuery.prepare("DELETE FROM tags_refs WHERE ref_id = :RID; "
-                     "DELETE FROM refs WHERE refs.id = :RID; ");
+    preQuery.prepare("DELETE FROM tags_refs WHERE ref_id = :RID1 ");
     preQuery.bindValue(":RID",  id);
 
     if( !preQuery.exec() )
     {
-        std::cerr << preQuery.lastError().text().toStdString();
-        return false;
+        return preQuery.lastError();
     }
-    return true;
+    preQuery.prepare("DELETE FROM refs WHERE refs.id = :RID ");
+    preQuery.bindValue(":RID",  id);
+
+    if( !preQuery.exec() )
+    {
+        return preQuery.lastError();
+    }
+    return QSqlError();
 }
 
-bool Tags::remove(long long id)
+QSqlError Tags::remove(long long id)
 {
     QSqlQuery preQuery(currentDatabase());
-    preQuery.prepare("DELETE FROM tags_refs WHERE tag_id = :TID; "
-                     "DELETE FROM tags WHERE tags.id = :TID; ");
+    preQuery.prepare("DELETE FROM tags_refs WHERE tag_id = :TID ");
     preQuery.bindValue(":TID",  id);
 
     if( !preQuery.exec() )
     {
-        std::cerr << preQuery.lastError().text().toStdString();
-        return false;
+        return preQuery.lastError();
     }
-    return true;
+
+    preQuery.prepare("DELETE FROM tags WHERE tags.id = :TID ");
+    preQuery.bindValue(":TID",  id);
+
+    if( !preQuery.exec() )
+    {
+        return preQuery.lastError();
+    }
+    return QSqlError();
 }
