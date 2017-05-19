@@ -63,6 +63,7 @@ void RefRecords::createTags(RefRecord *parent)
     }
 }
 
+
 DataObject* Tags::create()
 {
   return new Tag;
@@ -91,4 +92,34 @@ DataObject* Tags::findByCode(const long long id)
         }
     }
     return newTag;
+}
+
+bool RefRecords::remove(long long id)
+{
+    QSqlQuery preQuery(currentDatabase());
+    preQuery.prepare("DELETE FROM tags_refs WHERE ref_id = :RID; "
+                     "DELETE FROM refs WHERE refs.id = :RID; ");
+    preQuery.bindValue(":RID",  id);
+
+    if( !preQuery.exec() )
+    {
+        std::cerr << preQuery.lastError().text().toStdString();
+        return false;
+    }
+    return true;
+}
+
+bool Tags::remove(long long id)
+{
+    QSqlQuery preQuery(currentDatabase());
+    preQuery.prepare("DELETE FROM tags_refs WHERE tag_id = :TID; "
+                     "DELETE FROM tags WHERE tags.id = :TID; ");
+    preQuery.bindValue(":TID",  id);
+
+    if( !preQuery.exec() )
+    {
+        std::cerr << preQuery.lastError().text().toStdString();
+        return false;
+    }
+    return true;
 }
