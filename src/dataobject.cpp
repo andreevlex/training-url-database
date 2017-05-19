@@ -20,3 +20,8 @@ bool DataObject::isNew()
 {
     return checkIsNew();
 }
+
+bool DataObject::isModified()
+{
+    return getModified();
+}
