@@ -166,7 +166,7 @@ void MainWindow::on_pbAddTag_clicked()
     tag_di.activateWindow();
     if(tag_di.exec())
     {
-
+        urlDB_m->update();
     }
 }
 
@@ -183,11 +183,21 @@ void MainWindow::on_pbAddRefRecord_clicked()
     ref_di.activateWindow();
     if(ref_di.exec())
     {
-
+         urlDB_m->update();
     }
 }
 
 void MainWindow::on_pbDelRefRecord_clicked()
+{
+
+}
+
+void MainWindow::on_pbLinkTag_clicked()
+{
+
+}
+
+void MainWindow::on_pbDelLinkTag_clicked()
 {
 
 }

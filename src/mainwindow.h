@@ -32,6 +32,8 @@ private slots:
     void on_pbAddRefRecord_clicked();
     void on_pbDelRefRecord_clicked();
     void checkUrl();
+    void on_pbLinkTag_clicked();
+    void on_pbDelLinkTag_clicked();
 
 private:
 

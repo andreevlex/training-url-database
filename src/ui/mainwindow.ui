@@ -20,8 +20,11 @@
       <x>260</x>
       <y>50</y>
       <width>701</width>
-      <height>511</height>
+      <height>491</height>
      </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SingleSelection</enum>
     </property>
     <property name="selectionBehavior">
      <enum>QAbstractItemView::SelectRows</enum>
@@ -33,7 +36,7 @@
       <x>10</x>
       <y>50</y>
       <width>241</width>
-      <height>501</height>
+      <height>491</height>
      </rect>
     </property>
     <property name="selectionMode">
@@ -72,7 +75,7 @@
    <widget class="QPushButton" name="pbAddRefRecord">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>260</x>
       <y>20</y>
       <width>80</width>
       <height>26</height>
@@ -85,7 +88,7 @@
    <widget class="QPushButton" name="pbDelRefRecord">
     <property name="geometry">
      <rect>
-      <x>870</x>
+      <x>340</x>
       <y>20</y>
       <width>80</width>
       <height>26</height>
@@ -93,6 +96,32 @@
     </property>
     <property name="text">
      <string>Удалить</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbLinkTag">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>20</y>
+      <width>111</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Добавить тэг</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbDelLinkTag">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>20</y>
+      <width>101</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Удалить тэг</string>
     </property>
    </widget>
   </widget>
