@@ -23,6 +23,9 @@
       <height>491</height>
      </rect>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::SingleSelection</enum>
     </property>
@@ -38,6 +41,9 @@
       <width>241</width>
       <height>491</height>
      </rect>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
     </property>
     <property name="selectionMode">
      <enum>QAbstractItemView::SingleSelection</enum>
@@ -99,6 +105,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pbLinkTag">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>730</x>
@@ -112,6 +121,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="pbDelLinkTag">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>850</x>
