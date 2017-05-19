@@ -40,9 +40,9 @@ private:
         xml
     };
 
-    QNetworkAccessManager* mng;
-    QUrl checkUrl_;
-    QString hostName_{""};
+    QNetworkAccessManager* mng_m;
+    QUrl checkUrl_m;
+    QString hostName_m{""};
 
     QString buildQueryOneObject(const typeFormat format);
     QString getStringNameFormat(const typeFormat format);

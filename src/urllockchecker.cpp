@@ -6,54 +6,54 @@
 QString UrlLockChecker::baseUrl("https://api.antizapret.info");
 
 UrlLockChecker::UrlLockChecker()
-: mng(new QNetworkAccessManager(this))
-, checkUrl_()
+: mng_m(new QNetworkAccessManager(this))
+, checkUrl_m()
 {
 
 }
 
 UrlLockChecker::UrlLockChecker(const QString& checkurl)
-: mng(new QNetworkAccessManager(this))
+: mng_m(new QNetworkAccessManager(this))
 {
     setCheckUrl(checkurl);
 }
 
 UrlLockChecker::~UrlLockChecker()
 {
-    delete mng;
+    delete mng_m;
 }
 
 void UrlLockChecker::setCheckUrl(const QString& checkurl)
 {
     QUrl newheckurl(checkurl);
 
-    checkUrl_ = newheckurl;
+    checkUrl_m = newheckurl;
 
-    if( checkUrl_.isValid() )
+    if( checkUrl_m.isValid() )
     {
-        hostName_ = checkUrl_.host().replace("www.", "");
+        hostName_m = checkUrl_m.host().replace("www.", "");
     }
     else
     {
-        hostName_ = "";
+        hostName_m = "";
     }
 }
 
 QUrl UrlLockChecker::getCheckUrl(void) const
 {
-    return checkUrl_;
+    return checkUrl_m;
 }
 
 QString UrlLockChecker::getHostName(void) const
 {
-    return hostName_;
+    return hostName_m;
 }
 
 bool UrlLockChecker::isLock()
 {
     bool UrlLock = false;
 
-    if( !checkUrl_.isValid() )
+    if( !checkUrl_m.isValid() )
     {
         throw std::invalid_argument("Ссылка не корректна!"
                                     " Запрос невозможен.");
@@ -62,7 +62,7 @@ bool UrlLockChecker::isLock()
     QString queryStr = buildQueryOneObject(typeFormat::small);
     QUrl urlRequest(queryStr);
     QNetworkRequest request(urlRequest);
-    QNetworkReply* reply = mng->get(request);
+    QNetworkReply* reply = mng_m->get(request);
 
     // реализуем ожидание конца загрузки
     QEventLoop loop;
@@ -93,7 +93,7 @@ bool UrlLockChecker::isLock()
         {
             qDebug() << "Запрос не корректный: "
                      << queryStr << "\n"
-                     << checkUrl_.toString();
+                     << checkUrl_m.toString();
             UrlLock = false;
         }
         else
@@ -113,14 +113,14 @@ bool UrlLockChecker::isLock()
 
 bool UrlLockChecker::isValid(void) const
 {
-    return checkUrl_.isValid();
+    return checkUrl_m.isValid();
 }
 
 QString UrlLockChecker::buildQueryOneObject(const typeFormat format)
 {
     return UrlLockChecker::baseUrl +
             QStringLiteral("/get.php?item=%1&type=%2")
-            .arg(hostName_)
+            .arg(hostName_m)
             .arg(getStringNameFormat(format));
 }
 
