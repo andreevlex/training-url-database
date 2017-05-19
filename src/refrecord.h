@@ -31,7 +31,8 @@ public:
     void setDateCreate(const QDateTime& dateCreate);
     QDateTime getDateCreate(void) const;
 
-    bool getModified(void) const;
+    bool addTag(Tag* value);
+    bool removeTag(const Tag& value);
 
     TagsList& getTags();
 private:
@@ -44,8 +45,8 @@ private:
     TagsList                tags_m;
 
     bool saveData(QSqlQuery &query);
-    bool checkIsNew();
-
+    bool checkIsNew() const;
+    bool getModified() const;
 };
 
 bool operator ==(const RefRecord& loper, const RefRecord& roper);

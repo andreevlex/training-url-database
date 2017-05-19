@@ -2,13 +2,14 @@
 #include <iostream>
 #include <QVariant>
 #include <QtSql>
+#include <typeinfo>
 
 #include "refrecord.h"
-#include <typeinfo>
+#include "workingdb.h"
 
 RefRecord::RefRecord()
 {
-    setDateCreate(QDateTime::currentDateTimeUtc());
+    setDateCreate(QDateTime::currentDateTimeUtc());    
 }
 
 RefRecord::RefRecord(const QString& name, const QString& url):
@@ -35,6 +36,7 @@ RefRecord::RefRecord(const RefRecord& other)
            tags_m.add(newTag);
        }
     }
+    modified_m = true;
 }
 
 RefRecord::~RefRecord()
@@ -130,7 +132,7 @@ bool RefRecord::saveData(QSqlQuery &query)
     else
     {
         query.prepare("UPDATE refs SET datecreate = :datecreate, favorite = :favorite, name = :name, url = :url WHERE id = :ID");
-    query.bindValue(":ID", id_m);
+        query.bindValue(":ID", id_m);
     }
 
     query.bindValue(":datecreate",  dateCreate_m.toString(Qt::ISODate));
@@ -157,9 +159,53 @@ bool RefRecord::saveData(QSqlQuery &query)
     return true;
 }
 
-bool RefRecord::checkIsNew()
+bool RefRecord::checkIsNew() const
 {
     return ( 0 == id_m );
+}
+
+bool RefRecord::addTag(Tag *value)
+{
+    if( checkIsNew() )
+    {
+        return false;
+    }
+
+    if( value->isNew() || value->isModified() )
+    {
+        if( !value->save() )
+        {
+            return false;
+        }
+    }
+    QSqlQuery query(currentDatabase());
+    query.prepare("INSERT INTO tags_refs (ref_id, tag_id) VALUES (:RID, :TID)");
+    query.bindValue(":RID",  id_m);
+    query.bindValue(":TID",  value->getID());
+
+    if( !query.exec() )
+    {
+        std::cerr << query.lastError().text().toStdString();
+        return false;
+    }
+
+    tags_m.add(value);
+    return true;
+}
+
+bool RefRecord::removeTag(const Tag &value)
+{
+    QSqlQuery query(currentDatabase());
+    query.prepare("DELETE FROM tags_refs WHERE ref_id = :RID and tag_id = :TID");
+    query.bindValue(":RID",  id_m);
+    query.bindValue(":TID",  value.getID());
+
+    if( !query.exec() )
+    {
+        std::cerr << query.lastError().text().toStdString();
+        return false;
+    }
+    return true;
 }
 
 TagsList& RefRecord::getTags()

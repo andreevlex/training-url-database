@@ -14,6 +14,7 @@ Tag::Tag(const Tag& other)
 {
     id_m = other.id_m;
     name_m = other.name_m;
+    modified_m = true;
 }
 
 Tag::~Tag(){}
@@ -26,6 +27,7 @@ void Tag::setID(const long long id)
     }
 
     id_m = id;
+    modified_m = true;
 }
 
 long long Tag::getID() const
@@ -36,6 +38,7 @@ long long Tag::getID() const
 void Tag::setName(const QString& name)
 {
     name_m = name;
+    modified_m = true;
 }
 
 QString Tag::getName(void) const
@@ -97,9 +100,14 @@ bool Tag::saveData(QSqlQuery &query)
     return true;
 }
 
-bool Tag::checkIsNew()
+bool Tag::checkIsNew() const
 {
     return ( 0 == id_m );
+}
+
+bool Tag::getModified() const
+{
+    return modified_m;
 }
 
 bool operator ==(const Tag& loper, const Tag& roper)

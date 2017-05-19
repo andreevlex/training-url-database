@@ -21,9 +21,11 @@ public:
 private:
     long long  id_m{0};
     QString    name_m;
+    bool       modified_m{false};
 
     bool saveData(QSqlQuery &query);
-    bool checkIsNew();
+    bool checkIsNew() const;
+    bool getModified() const;
 };
 
 bool operator ==(const Tag& loper, const Tag& roper);
