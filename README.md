@@ -23,4 +23,4 @@
 класс DataObject - Паттерн Template Method (шаблонный метод)
 класс TagsList -  Паттерн Composite (компоновщик)
 класс DataObjectFactory - Паттерн Фабричный метод (Factory Method)
-
+класс UrlDatabase - Паттерн Facade (фасад)
