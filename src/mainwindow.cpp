@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    urlDB_m = new UrlDatabase(ui->RefRecordTV, this);
+    urlDB_m = new UrlDatabase(ui->RefRecordTV, ui->TagsTV, this);
 
     createMenu();
 }
@@ -51,13 +51,6 @@ void MainWindow::configureProgram()
     {
         dconf.mkpath(DATA_LOCATION);
     }
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    TagDialog* tag_di = new TagDialog;
-    tag_di->setAddMode(true);
-    tag_di->show();
 }
 
 void MainWindow::createMenu()
@@ -84,57 +77,16 @@ void MainWindow::createMenu()
     connect(showTagsAction, SIGNAL(triggered()), this, SLOT(showTags()));
     mnService->addAction(showTagsAction);
 
+    QAction * checkUrlAction = new QAction("Проверить URL", mnService);
+    connect(checkUrlAction, SIGNAL(triggered()), this, SLOT(checkUrl()));
+    mnService->addAction(checkUrlAction);
+
     QMenu * mnHelp = new QMenu("Помощь"); // Меню помощь
     ui->menuBar->addMenu(mnFile);
     ui->menuBar->addMenu(mnEdit);
     ui->menuBar->addMenu(mnService);
     ui->menuBar->addMenu(mnHelp);
 }
-
-//QString MainWindow::createStringTags(const RefRecord& currentRef)
-//{
-//    QString allTags("");
-
-//    for(auto ittags = currentRef.firstTag(); ittags != currentRef.lastTag(); ++ittags)
-//    {
-//        allTags += ittags->getName() + " ";
-//    }
-//    return allTags;
-//}
-
-//void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef)
-//{
-//    QStandardItem *item;
-
-//    item = new QStandardItem(QStringLiteral("%1").arg(currentRef.getID()));
-//    model->setItem(lineNum, 0, item);
-
-//    item = new QStandardItem(currentRef.getName());
-//    model->setItem(lineNum, 1, item);
-
-//    item = new QStandardItem(currentRef.getUrl());
-//    model->setItem(lineNum, 2, item);
-
-//    item = new QStandardItem("");
-//    model->setItem(lineNum, 3, item);
-
-//    /* реализация не функционального требования */
-//    UrlLockChecker newChecker(currentRef.getUrl());
-//    QString lockedStr("");
-
-//    if( newChecker.isValid() )
-//    {
-//      lockedStr = newChecker.isLock() ? "ДА" : "НЕТ";
-//    }
-//    else
-//    {
-//        lockedStr = "";
-//    }
-
-//    item = new QStandardItem(lockedStr);
-//    model->setItem(lineNum, 4, item);
-//    /* реализация не функционального требования */
-//}
 
 void MainWindow::showRefs()
 {
@@ -148,45 +100,50 @@ void MainWindow::showFavoriteRefs()
 
 void MainWindow::showTags()
 {
-//        QStandardItemModel *model = new QStandardItemModel;
-//    QStandardItem *item;
 
-//    // Заголовки столбцов
-//    QStringList horizontalHeader;
-//    horizontalHeader.append("name");
-
-//    model->setHorizontalHeaderLabels(horizontalHeader);
-
-//    std::unique_ptr<Udb::ListTags> allUniqTags(urlDB_m->getUniqTags());
-
-//    if(allUniqTags.get() != nullptr)
-//    {
-//        int i = 0;
-//        for(auto it = allUniqTags->begin(); it != allUniqTags->end(); ++it)
-//        {
-//            item = new QStandardItem(it->getName());
-//            model->setItem(i, 0, item);
-
-//            i++;
-//        }
-//    }
-
-//    ui->TRV->setModel(model);
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::checkUrl()
 {
-    UrlLockChecker newChecker("http://www.rutracker.org/");
+    QAbstractItemModel * model = ui->RefRecordTV->model();
+    QItemSelectionModel * selection = ui->RefRecordTV->selectionModel();
+    QModelIndexList indexes = selection->selectedIndexes();
+
+    if(indexes.isEmpty())
+    {
+       return;
+    }
+
+    QModelIndex current = indexes.first();
+    QVariant data = model->data(current);
+    bool okConv = false;
+    long long id_ref = data.toLongLong(&okConv);
+
+    if(!okConv)
+    {
+        return;
+    }
+
+    std::unique_ptr<RefRecord> refDB(dynamic_cast<RefRecord*>(RefRecords_m.findByCode(id_ref)));
+
+    if(!refDB)
+    {
+        return;
+    }
+
+    QString selected_text = refDB->getUrl();
+
+    UrlLockChecker newChecker(selected_text);
 
     if(newChecker.isValid())
     {
         if(newChecker.isLock())
         {
-            QMessageBox::information(this, "","rutracker.org в списке запрета!\n");
+            QMessageBox::information(this, "",selected_text+ " в списке запрета!\n");
         }
         else
         {
-            QMessageBox::information(this, "", "rutracker.org сайт не входит в список\n");
+            QMessageBox::information(this, "", selected_text + " сайт не входит в список\n");
         }
     }
 }
@@ -197,10 +154,36 @@ void MainWindow::showError(const QSqlError &err)
                 "Error initializing database: " + err.text());
 }
 
-
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_pbAddTag_clicked()
 {
-    RefDialog* ref_di = new RefDialog;
-    ref_di->setAddMode(true);
-    ref_di->show();
+    TagDialog tag_di(this);
+    tag_di.setAddMode(true);
+    tag_di.show();
+    tag_di.activateWindow();
+    if(tag_di.exec())
+    {
+
+    }
+}
+
+void MainWindow::on_pbDelTag_clicked()
+{
+
+}
+
+void MainWindow::on_pbAddRefRecord_clicked()
+{
+    RefDialog ref_di(this);
+    ref_di.setAddMode(true);
+    ref_di.show();
+    ref_di.activateWindow();
+    if(ref_di.exec())
+    {
+
+    }
+}
+
+void MainWindow::on_pbDelRefRecord_clicked()
+{
+
 }

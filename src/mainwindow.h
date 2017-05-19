@@ -9,6 +9,7 @@
 #include <QtSql>
 
 #include "urldatabase.h"
+#include "factorymethod.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,18 +24,20 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
     void showRefs();
     void showTags();
     void showFavoriteRefs();
-    void on_pushButton_2_clicked();
-    void on_pushButton_3_clicked();
+    void on_pbAddTag_clicked();
+    void on_pbDelTag_clicked();
+    void on_pbAddRefRecord_clicked();
+    void on_pbDelRefRecord_clicked();
+    void checkUrl();
 
 private:
 
     Ui::MainWindow *ui;
-
     UrlDatabase* urlDB_m;
+    RefRecords RefRecords_m;
 
     void createMenu();
     void showError(const QSqlError &err);

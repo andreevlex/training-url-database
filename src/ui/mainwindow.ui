@@ -23,8 +23,11 @@
       <height>511</height>
      </rect>
     </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
    </widget>
-   <widget class="QTableView" name="tableView">
+   <widget class="QTableView" name="TagsTV">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -33,8 +36,14 @@
       <height>501</height>
      </rect>
     </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SingleSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pbAddTag">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -47,7 +56,7 @@
      <string>Добавить</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pbDelTag">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -60,7 +69,7 @@
      <string>Удалить</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pbAddRefRecord">
     <property name="geometry">
      <rect>
       <x>720</x>
@@ -73,7 +82,7 @@
      <string>Добавить</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="pbDelRefRecord">
     <property name="geometry">
      <rect>
       <x>870</x>
@@ -93,7 +102,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
