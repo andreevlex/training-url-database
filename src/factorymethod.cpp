@@ -4,7 +4,7 @@
 #include "factorymethod.h"
 #include "workingdb.h"
 
-DataObject* RefRecords::create()
+DataObject *RefRecords::create()
 {
   return new RefRecord;
 }
@@ -30,6 +30,7 @@ DataObject* RefRecords::findByCode(const long long id)
             newReference->setName(query.value("name").toString());
             newReference->setDateCreate(query.value("datecreate").toDateTime());
             newReference->setFavorite(query.value("favorite").toBool());
+            newReference->setUrl(query.value("url").toString());
             return newReference;
         }
     }
