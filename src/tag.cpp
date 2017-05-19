@@ -2,8 +2,8 @@
 
 #include <QString>
 #include <iostream>
-#include <regex>
-#include <QtSql/QtSql>
+#include <QtSql>
+#include <QRegExp>
 
 Tag::Tag(const QString& name)
 {
@@ -37,7 +37,9 @@ long long Tag::getID() const
 
 void Tag::setName(const QString& name)
 {
-    name_m = name;
+    QString tmp = name;
+    tmp.replace(QRegExp("\\s"), "_");
+    name_m = tmp;
     modified_m = true;
 }
 
@@ -48,22 +50,12 @@ QString Tag::getName(void) const
 
 bool Tag::isValid() const
 {
-    std::regex re("\\s");
-
     if( name_m.isEmpty() )
     {
         std::cerr << "Имя тэга не должно быть пустым.";
         return false;
     }
-
-    if( regex_match( name_m.toStdString(), re) )
-    {
-        std::cerr << "Имя тэга не должно содержать пробелов.";
-        return false;
-    }
-
     return true;
-
 }
 
 bool Tag::saveData(QSqlQuery &query)
