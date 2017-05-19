@@ -8,6 +8,8 @@
 #include "makestring.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "tagdialog.h"
+#include "refdialog.h"
 #include "urldatabase.h"
 #include "config.h"
 #include "urllockchecker.h"
@@ -32,11 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
     urlDB_m = new UrlDatabase(ui->RefRecordTV, this);
 
     createMenu();
-    //createTreeView();
 }
 
 MainWindow::~MainWindow()
 {
+    delete urlDB_m;
     delete ui;
 }
 
@@ -53,52 +55,9 @@ void MainWindow::configureProgram()
 
 void MainWindow::on_pushButton_clicked()
 {
-//    if( dbMain->openDB() )
-//    {
-
-//    size_t countt = dbMain->tagsCount();
-//    QString sCount = QStringLiteral("Количество уникальных тэгов = %1\n").arg(countt);
-//    ui->textEdit1->insertPlainText(sCount);
-
-//    size_t countr = dbMain->refsCount();
-//    QString sCount2 = QStringLiteral("Количество ссылок в базе = %1\n").arg(countr);
-//    ui->textEdit1->insertPlainText(sCount2);
-
-//    bool refFind = false;
-//    long long int four = 4;
-//    const RefRecord& refg = dbMain->getRef(four, refFind);
-//    if(refFind)
-//    {
-//        QString sRefInfo = QStringLiteral("id=%1, "
-//                                          "name=%2, "
-//                                          "url=%3, "
-//                                          "date=%, "
-//                                          "fav=%4\n").arg(refg.getID())
-//                                                     .arg(refg.getName())
-//                                                     .arg(refg.getUrl())
-//                                                     .arg(refg.getDateCreate().toString())
-//                                                     .arg(refg.getFavorite());
-//        ui->textEdit1->insertPlainText(sRefInfo);
-//    }
-//    // add
-//    RefRecord newRec;
-//    newRec.setName("Вторая ссылка добавлена");
-//    newRec.setUrl("www.isa.ru/");
-//    newRec.setDateCreate(QDateTime::currentDateTimeUtc());
-
-//    Tag newTag;
-//    newTag.setName("tag2");
-//    newRec.addTag(newTag);
-
-//    dbMain->addRef(newRec);
-
-//    dbMain->closeDB();
-//    }
-//    else
-//    {
-//        ui->textEdit1->insertPlainText("что-то пошло не так");
-//    }
-
+    TagDialog* tag_di = new TagDialog;
+    tag_di->setAddMode(true);
+    tag_di->show();
 }
 
 void MainWindow::createMenu()
@@ -143,104 +102,47 @@ void MainWindow::createMenu()
 //    return allTags;
 //}
 
-void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef)
-{
-    QStandardItem *item;
+//void MainWindow::addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef)
+//{
+//    QStandardItem *item;
 
-    item = new QStandardItem(QStringLiteral("%1").arg(currentRef.getID()));
-    model->setItem(lineNum, 0, item);
+//    item = new QStandardItem(QStringLiteral("%1").arg(currentRef.getID()));
+//    model->setItem(lineNum, 0, item);
 
-    item = new QStandardItem(currentRef.getName());
-    model->setItem(lineNum, 1, item);
+//    item = new QStandardItem(currentRef.getName());
+//    model->setItem(lineNum, 1, item);
 
-    item = new QStandardItem(currentRef.getUrl());
-    model->setItem(lineNum, 2, item);
+//    item = new QStandardItem(currentRef.getUrl());
+//    model->setItem(lineNum, 2, item);
 
-    item = new QStandardItem("");
-    model->setItem(lineNum, 3, item);
+//    item = new QStandardItem("");
+//    model->setItem(lineNum, 3, item);
 
-    /* реализация не функционального требования */
-    UrlLockChecker newChecker(currentRef.getUrl());
-    QString lockedStr("");
+//    /* реализация не функционального требования */
+//    UrlLockChecker newChecker(currentRef.getUrl());
+//    QString lockedStr("");
 
-    if( newChecker.isValid() )
-    {
-      lockedStr = newChecker.isLock() ? "ДА" : "НЕТ";
-    }
-    else
-    {
-        lockedStr = "";
-    }
+//    if( newChecker.isValid() )
+//    {
+//      lockedStr = newChecker.isLock() ? "ДА" : "НЕТ";
+//    }
+//    else
+//    {
+//        lockedStr = "";
+//    }
 
-    item = new QStandardItem(lockedStr);
-    model->setItem(lineNum, 4, item);
-    /* реализация не функционального требования */
-}
+//    item = new QStandardItem(lockedStr);
+//    model->setItem(lineNum, 4, item);
+//    /* реализация не функционального требования */
+//}
 
 void MainWindow::showRefs()
 {
-
-    QStandardItemModel *model = new QStandardItemModel;
-
-    // Заголовки столбцов
-    QStringList horizontalHeader;
-    horizontalHeader.append("id");
-    horizontalHeader.append("name");
-    horizontalHeader.append("url");
-    horizontalHeader.append("tags");
-    horizontalHeader.append("locked");
-
-
-    model->setHorizontalHeaderLabels(horizontalHeader);
-
-    std::unique_ptr<Udb::ListRefs> allRefs(urlDB_m->getRefs());
-
-    if(allRefs.get() != nullptr)
-    {
-        int i = 0;
-        for(auto it = allRefs->begin(); it != allRefs->end(); ++it)
-        {
-            addLineToRefs(model, i, *it);
-            i++;
-        }
-    }
-
-    ui->RefRecordTV->setModel(model);
-    ui->RefRecordTV->resizeRowsToContents();
-    ui->RefRecordTV->resizeColumnsToContents();
 
 }
 
 void MainWindow::showFavoriteRefs()
 {
-    QStandardItemModel *model = new QStandardItemModel;
-
-    // Заголовки столбцов
-    QStringList horizontalHeader;
-    horizontalHeader.append("id");
-    horizontalHeader.append("name");
-    horizontalHeader.append("url");
-    horizontalHeader.append("tags");
-    horizontalHeader.append("locked");
-
-    model->setHorizontalHeaderLabels(horizontalHeader);
-
-    std::unique_ptr<Udb::ListRefs> allFavoriteRefs(urlDB_m->getFavoriteRefs());
-
-    if(allFavoriteRefs.get() != nullptr)
-    {
-        int i = 0;
-        for(auto it = allFavoriteRefs->begin(); it != allFavoriteRefs->end(); ++it)
-        {
-            addLineToRefs(model, i, *it);
-
-            i++;
-        }
-    }
-
-    ui->RefRecordTV->setModel(model);
-    ui->RefRecordTV->resizeRowsToContents();
-    ui->RefRecordTV->resizeColumnsToContents();
 
 }
 
@@ -289,18 +191,16 @@ void MainWindow::on_pushButton_2_clicked()
     }
 }
 
-
-void MainWindow::createTreeView()
-{
-    QFileSystemModel *model = new QFileSystemModel;
-    model->setRootPath(QDir::currentPath());
-
-    ui->TRV->setModel(model);
-}
-
 void MainWindow::showError(const QSqlError &err)
 {
     QMessageBox::critical(this, "Unable to initialize Database",
                 "Error initializing database: " + err.text());
 }
 
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    RefDialog* ref_di = new RefDialog;
+    ref_di->setAddMode(true);
+    ref_di->show();
+}

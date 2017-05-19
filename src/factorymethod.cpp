@@ -28,6 +28,8 @@ DataObject* RefRecords::findByCode(const long long id)
             newReference = new RefRecord;
             newReference->setID(query.value("id").toLongLong());
             newReference->setName(query.value("name").toString());
+            newReference->setDateCreate(query.value("datecreate").toDateTime());
+            newReference->setFavorite(query.value("favorite").toBool());
             return newReference;
         }
     }

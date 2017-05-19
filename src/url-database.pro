@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     urllockchecker.cpp \
     tagslist.cpp \
     factorymethod.cpp \
-    dataobject.cpp
+    dataobject.cpp \
+    tagdialog.cpp \
+    refdialog.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
@@ -34,10 +36,13 @@ HEADERS  += mainwindow.h \
     compositepattern.h \
     workingdb.h \
     factorymethod.h \
-    dataobject.h
+    dataobject.h \
+    refdialog.h \
+    tagdialog.h
 
 FORMS    += ui/mainwindow.ui \
-    ui/addreferencedialog.ui
+    ui/tagdialog.ui \
+    ui/refdialog.ui
 
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CFLAGS_WARN_ON = -Wall

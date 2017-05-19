@@ -28,6 +28,8 @@ private slots:
     void showTags();
     void showFavoriteRefs();
     void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -36,8 +38,7 @@ private:
 
     void createMenu();
     void showError(const QSqlError &err);
-    void addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef);
-    void createTreeView();
+//    void addLineToRefs(QStandardItemModel* model, const unsigned int lineNum, const RefRecord& currentRef);
     void configureProgram();
 };
 

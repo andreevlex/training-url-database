@@ -5,7 +5,7 @@
 #include "dataobject.h"
 #include "compositepattern.h"
 
-class Tag : public AbstractComponent, public DataObject
+class Tag : public DataObject, public AbstractComponent
 {
 public:
     Tag(const QString &name = QString());
