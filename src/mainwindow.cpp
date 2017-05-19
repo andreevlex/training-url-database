@@ -10,6 +10,7 @@
 #include "ui_mainwindow.h"
 #include "tagdialog.h"
 #include "refdialog.h"
+#include "aboutdialog.h"
 #include "urldatabase.h"
 #include "config.h"
 #include "urllockchecker.h"
@@ -85,11 +86,24 @@ void MainWindow::createMenu()
     connect(checkUrlAction, SIGNAL(triggered()), this, SLOT(checkUrl()));
     mnService->addAction(checkUrlAction);
 
-    QMenu * mnHelp = new QMenu("Помощь"); // Меню помощь
+    QMenu * mnHelp = new QMenu("Помощь");
+    QAction * AboutAction = new QAction("О программе...", mnHelp);
+    connect(AboutAction, SIGNAL(triggered()), this, SLOT(about()));
+    mnHelp->addAction(AboutAction);
+
     ui->menuBar->addMenu(mnFile);
     ui->menuBar->addMenu(mnEdit);
     ui->menuBar->addMenu(mnService);
     ui->menuBar->addMenu(mnHelp);
+}
+
+
+void MainWindow::about()
+{
+    AboutDialog about_di(this);
+    about_di.show();
+    about_di.activateWindow();
+    about_di.exec();
 }
 
 void MainWindow::showRefs()

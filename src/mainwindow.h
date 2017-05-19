@@ -34,6 +34,7 @@ private slots:
     void checkUrl();
     void on_pbLinkTag_clicked();
     void on_pbDelLinkTag_clicked();
+    void about();
 
 private:
 

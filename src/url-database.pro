@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     factorymethod.cpp \
     dataobject.cpp \
     tagdialog.cpp \
-    refdialog.cpp
+    refdialog.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
@@ -38,11 +39,13 @@ HEADERS  += mainwindow.h \
     factorymethod.h \
     dataobject.h \
     refdialog.h \
-    tagdialog.h
+    tagdialog.h \
+    aboutdialog.h
 
 FORMS    += ui/mainwindow.ui \
     ui/tagdialog.ui \
-    ui/refdialog.ui
+    ui/refdialog.ui \
+    ui/aboutdialog.ui
 
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CFLAGS_WARN_ON = -Wall
