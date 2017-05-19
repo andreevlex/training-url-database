@@ -31,4 +31,12 @@ UrlDatabase::UrlDatabase(QTableView * refRecords, QTableView *tags, QObject *par
 
 UrlDatabase::~UrlDatabase()
 {
+    delete RefRecordsModel_m;
+    delete TagsModel_m;
+}
+
+void UrlDatabase::update()
+{
+    RefRecordsModel_m->select();
+    TagsModel_m->select();
 }

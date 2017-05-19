@@ -20,6 +20,8 @@ public:
     UrlDatabase(QTableView * refRecords, QTableView * tags, QObject *parent = 0);
     virtual ~UrlDatabase();
 
+    void update();
+
 protected:
 
     QSqlTableModel *RefRecordsModel_m;
