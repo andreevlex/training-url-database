@@ -21,12 +21,18 @@ public:
     virtual ~UrlDatabase();
 
     void update();
+    void showRefs();
+    void showTags();
+    void showFavoriteRefs();
 
 protected:
 
     QSqlTableModel *RefRecordsModel_m;
     QSqlTableModel *TagsModel_m;
+    QSqlQueryModel *QueryModel_m;
 private:
+    QTableView * refRecords_m{nullptr};
+    QTableView * tags_m{nullptr};
 };
 
 #endif // URLDATABASE_H

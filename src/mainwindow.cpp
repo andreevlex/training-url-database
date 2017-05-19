@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     urlDB_m = new UrlDatabase(ui->RefRecordTV, ui->TagsTV, this);
+    urlDB_m->showRefs();
+    urlDB_m->showTags();
+
     RefRecords_m =  new RefRecords;
     Tags_m = new Tags;
 
@@ -108,17 +111,17 @@ void MainWindow::about()
 
 void MainWindow::showRefs()
 {
-
+    urlDB_m->showRefs();
 }
 
 void MainWindow::showFavoriteRefs()
 {
-
+    urlDB_m->showFavoriteRefs();
 }
 
 void MainWindow::showTags()
 {
-
+    urlDB_m->showTags();
 }
 
 void MainWindow::checkUrl()
