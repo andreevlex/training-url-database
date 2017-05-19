@@ -35,10 +35,6 @@ long long Tag::getID() const
 
 void Tag::setName(const QString& name)
 {
-    if( name.isEmpty() )
-    {
-        throw std::invalid_argument ("Имя тэга не должно быть пустым.");
-    }
     name_m = name;
 }
 

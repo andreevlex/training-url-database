@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "tagdialog.h"
 #include "ui_tagdialog.h"
 #include "factorymethod.h"
@@ -22,14 +24,15 @@ void TagDialog::setAddMode(const bool addmode)
 
 void TagDialog::on_buttonBox_accepted()
 {
-//    Tags Tags_m;
-//    Tag* newTag = Tags_m.create();
-//    newTag->setName(ui->editTagName->text());
+    Tags Tags_m;
+    std::unique_ptr<Tag> newTag(dynamic_cast<Tag*>(Tags_m.create()));
 
-//    if( newTag->save() )
-//    {
-//        this->close();
-//    }
+    newTag->setName(ui->editTagName->text());
+
+    if( newTag->save() )
+    {
+        this->close();
+    }
 }
 
 void TagDialog::on_buttonBox_rejected()
