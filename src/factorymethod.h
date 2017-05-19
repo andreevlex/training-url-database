@@ -21,6 +21,8 @@ class RefRecords: public DataObjectFactory
   public:
     DataObject* create();
     DataObject* findByCode(const long long id);
+  private:
+    void createTags(RefRecord* parent);
 };
 
 class Tags: public DataObjectFactory

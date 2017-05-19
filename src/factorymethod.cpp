@@ -3,6 +3,7 @@
 
 #include "factorymethod.h"
 #include "workingdb.h"
+#include "tagslist.h"
 
 DataObject *RefRecords::create()
 {
@@ -31,10 +32,35 @@ DataObject* RefRecords::findByCode(const long long id)
             newReference->setDateCreate(query.value("datecreate").toDateTime());
             newReference->setFavorite(query.value("favorite").toBool());
             newReference->setUrl(query.value("url").toString());
+
+            createTags(newReference);
             return newReference;
         }
     }
     return newReference;
+}
+
+void RefRecords::createTags(RefRecord *parent)
+{
+    QSqlQuery query(currentDatabase());
+    query.prepare("select t.id, t.name from tags as t join tags_refs as tr on (t.id = tr.tag_id) where tr.ref_id = :ID");
+    query.bindValue(":ID", parent->getID());
+    if( !query.exec() )
+    {
+         std::cerr << query.lastError().text().toStdString();
+         return;
+    }
+    else
+    {
+        TagsList& parent_tags = parent->getTags();
+        while( query.next() )
+        {
+            Tag* newTag = new Tag;
+            newTag->setID(query.value("id").toLongLong());
+            newTag->setName(query.value("name").toString());
+            parent_tags.add(newTag);
+        }
+    }
 }
 
 DataObject* Tags::create()
