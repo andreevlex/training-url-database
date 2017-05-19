@@ -37,7 +37,8 @@ private:
 
     Ui::MainWindow *ui;
     UrlDatabase* urlDB_m;
-    RefRecords RefRecords_m;
+    RefRecords* RefRecords_m;
+    Tags* Tags_m;
 
     void createMenu();
     void showError(const QSqlError &err);

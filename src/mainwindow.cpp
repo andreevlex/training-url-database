@@ -32,12 +32,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     urlDB_m = new UrlDatabase(ui->RefRecordTV, ui->TagsTV, this);
+    RefRecords_m =  new RefRecords;
+    Tags_m = new Tags;
 
     createMenu();
 }
 
 MainWindow::~MainWindow()
 {
+    delete RefRecords_m;
+    delete Tags_m;
     delete urlDB_m;
     delete ui;
 }
@@ -124,7 +128,7 @@ void MainWindow::checkUrl()
         return;
     }
 
-    std::unique_ptr<RefRecord> refDB(dynamic_cast<RefRecord*>(RefRecords_m.findByCode(id_ref)));
+    std::unique_ptr<RefRecord> refDB(dynamic_cast<RefRecord*>(RefRecords_m->findByCode(id_ref)));
 
     if(!refDB)
     {
