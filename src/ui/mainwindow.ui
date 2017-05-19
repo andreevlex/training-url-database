@@ -62,7 +62,7 @@
    <widget class="QPushButton" name="pbDelTag">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>100</x>
       <y>20</y>
       <width>80</width>
       <height>26</height>
@@ -101,7 +101,7 @@
    <widget class="QPushButton" name="pbLinkTag">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>730</x>
       <y>20</y>
       <width>111</width>
       <height>28</height>
@@ -114,7 +114,7 @@
    <widget class="QPushButton" name="pbDelLinkTag">
     <property name="geometry">
      <rect>
-      <x>790</x>
+      <x>850</x>
       <y>20</y>
       <width>101</width>
       <height>28</height>
@@ -131,7 +131,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

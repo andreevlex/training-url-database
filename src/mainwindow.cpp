@@ -172,7 +172,26 @@ void MainWindow::on_pbAddTag_clicked()
 
 void MainWindow::on_pbDelTag_clicked()
 {
+    QAbstractItemModel * model = ui->TagsTV->model();
+    QItemSelectionModel * selection = ui->TagsTV->selectionModel();
+    QModelIndexList indexes = selection->selectedIndexes();
 
+    if(indexes.isEmpty())
+    {
+       return;
+    }
+
+    QModelIndex current = indexes.first();
+    QVariant data = model->data(current);
+    bool okConv = false;
+    long long id_tag = data.toLongLong(&okConv);
+
+    if(!okConv)
+    {
+        return;
+    }
+    Tags::remove(id_tag);
+    urlDB_m->update();
 }
 
 void MainWindow::on_pbAddRefRecord_clicked()
@@ -189,7 +208,26 @@ void MainWindow::on_pbAddRefRecord_clicked()
 
 void MainWindow::on_pbDelRefRecord_clicked()
 {
+    QAbstractItemModel * model = ui->RefRecordTV->model();
+    QItemSelectionModel * selection = ui->RefRecordTV->selectionModel();
+    QModelIndexList indexes = selection->selectedIndexes();
 
+    if(indexes.isEmpty())
+    {
+       return;
+    }
+
+    QModelIndex current = indexes.first();
+    QVariant data = model->data(current);
+    bool okConv = false;
+    long long id_ref = data.toLongLong(&okConv);
+
+    if(!okConv)
+    {
+        return;
+    }
+    RefRecords::remove(id_ref);
+    urlDB_m->update();
 }
 
 void MainWindow::on_pbLinkTag_clicked()
