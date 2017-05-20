@@ -35,6 +35,7 @@ public:
     bool removeTag(const Tag& value);
 
     TagsList& getTags();
+    RefRecord& operator=(const RefRecord& other);
 private:
     QString                 name_m;
     QString                 url_m;

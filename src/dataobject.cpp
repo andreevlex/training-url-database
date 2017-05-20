@@ -16,12 +16,12 @@ bool DataObject::save()
     return saveData(preQuery);
 }
 
-bool DataObject::isNew()
+bool DataObject::isNew() const
 {
     return checkIsNew();
 }
 
-bool DataObject::isModified()
+bool DataObject::isModified() const
 {
     return getModified();
 }

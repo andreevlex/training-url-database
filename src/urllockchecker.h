@@ -18,7 +18,7 @@ class UrlLockChecker: public QObject
 public:
 
     UrlLockChecker();
-    UrlLockChecker(const QString& checkurl);
+    explicit UrlLockChecker(const QString& checkurl);
     ~UrlLockChecker();
 
     void setCheckUrl(const QString& checkurl);
@@ -32,7 +32,7 @@ public:
     static QString baseUrl;
 
 private:
-    enum class typeFormat
+    enum class typeFormat : int
     {
         small,
         csv,

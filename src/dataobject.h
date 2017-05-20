@@ -1,7 +1,7 @@
 #ifndef DATAOBJECT_H
 #define DATAOBJECT_H
 
-#include <QtSql/QSqlQuery>
+#include <QtSql>
 
 class DataObject
 {
@@ -10,8 +10,8 @@ public:
     virtual ~DataObject();
 
     bool save();
-    bool isNew();
-    bool isModified();
+    bool isNew() const;
+    bool isModified() const;
 private:
     virtual bool saveData(QSqlQuery &preQuery) = 0;
     virtual bool checkIsNew() const = 0;

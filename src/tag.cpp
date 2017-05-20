@@ -102,6 +102,14 @@ bool Tag::getModified() const
     return modified_m;
 }
 
+Tag& Tag::operator=(const Tag& other)
+{
+    if(this == &other) return *this;
+    id_m = other.id_m;
+    name_m = other.name_m;
+    return *this;
+}
+
 bool operator ==(const Tag& loper, const Tag& roper)
 {
     return (loper.getName() == roper.getName());

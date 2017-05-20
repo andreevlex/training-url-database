@@ -26,6 +26,7 @@ RefRecord::RefRecord(const RefRecord& other)
     url_m         = other.url_m;
     favorite_m    = other.favorite_m;
     modified_m    = other.modified_m;
+    dateCreate_m  = other.dateCreate_m;
 
     tags_m.clear();
     for(TagsList::const_iterator it_tag = other.tags_m.begin(); it_tag != other.tags_m.end(); ++it_tag)
@@ -211,6 +212,29 @@ bool RefRecord::removeTag(const Tag &value)
 TagsList& RefRecord::getTags()
 {
     return tags_m;
+}
+
+RefRecord& RefRecord::operator=(const RefRecord& other)
+{
+    if(this == &other) return *this;
+    id_m          = other.id_m;
+    name_m        = other.name_m;
+    url_m         = other.url_m;
+    favorite_m    = other.favorite_m;
+    modified_m    = other.modified_m;
+    dateCreate_m  = other.dateCreate_m;
+
+    tags_m.clear();
+    for(TagsList::const_iterator it_tag = other.tags_m.begin(); it_tag != other.tags_m.end(); ++it_tag)
+    {
+       if( const Tag *other_tag = dynamic_cast<const Tag *>(*it_tag) )
+       {
+           Tag* newTag = new Tag(*other_tag);
+           tags_m.add(newTag);
+       }
+    }
+    modified_m = true;
+    return *this;
 }
 
 bool operator ==(const RefRecord& loper, const RefRecord& roper)

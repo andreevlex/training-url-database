@@ -8,7 +8,7 @@
 class Tag : public DataObject, public AbstractComponent
 {
 public:
-    Tag(const QString &name = QString());
+    explicit Tag(const QString &name = QString());
     Tag(const Tag &other);
     ~Tag();
 
@@ -18,6 +18,7 @@ public:
     void setName(const QString& name);
     QString getName(void) const;
     bool isValid() const;
+    Tag& operator=(const Tag &other);
 private:
     long long  id_m{0};
     QString    name_m;
